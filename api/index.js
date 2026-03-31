@@ -13,6 +13,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
+  'https://mini-project-management-dashboard.vercel.app',
   /\.vercel\.app$/, // Allow all vercel preview/prod domains
 ];
 
@@ -25,6 +26,7 @@ app.use(cors({
     }
   },
   credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers crash on 204
 }));
 
 app.use(express.json());
@@ -33,11 +35,7 @@ app.use(cookieParser());
 // Simple Health Check
 app.get('/api/health', (req, res) => res.status(200).send('API is running'));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
-
-// MongoDB Connection (Managed for Serverless)
+// MongoDB Connection (Managed for Serverless/Render)
 let cachedDb = null;
 
 const connectDB = async () => {
@@ -61,6 +59,10 @@ app.use(async (req, res, next) => {
     res.status(500).json({ message: 'Database connection failed', error: err.message });
   }
 });
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Export the app for Vercel Serverless Functions
 module.exports = app;
