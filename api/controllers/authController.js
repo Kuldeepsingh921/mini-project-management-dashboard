@@ -8,8 +8,8 @@ const generateToken = (id) => {
 const setCookieAndRespond = (res, statusCode, user, token) => {
   res.cookie('jwt', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true, // Required for sameSite: 'none'
+    sameSite: 'none', // Required for cross-domain (Vercel/Render)
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
@@ -67,7 +67,12 @@ const login = async (req, res) => {
 
 // POST /api/auth/logout
 const logout = (req, res) => {
-  res.cookie('jwt', '', { httpOnly: true, maxAge: 0 });
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 0
+  });
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
