@@ -65,8 +65,8 @@ app.use(async (req, res, next) => {
 // Export the app for Vercel Serverless Functions
 module.exports = app;
 
-// Local development only
-if (process.env.NODE_ENV !== 'production') {
+// Start the server if run directly (e.g. Render, Local)
+if (require.main === module) {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`Server running locally on port ${PORT}`));
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
