@@ -17,11 +17,29 @@ const allowedOrigins = [
   /\.vercel\.app$/, // Allow all vercel preview/prod domains
 ];
 
-app.use(cors({
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
+// Manual aggressive CORS middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  // If the origin is from vercel.app or localhost, allow it specifically to support credentials
+  if (origin && (origin.endsWith('.vercel.app') || origin.includes('localhost'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    // Fallback for other origins
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Handle Chrome/Safari preflight (OPTIONS) requests immediately
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());
