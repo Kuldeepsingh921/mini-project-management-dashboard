@@ -18,23 +18,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin matches any allowed string or the vercel regex
-    const isAllowed = allowedOrigins.some(o => {
-      if (typeof o === 'string') return o === origin;
-      return o.test(origin);
-    });
-
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
-    }
-  },
+  origin: true,
   credentials: true,
   optionsSuccessStatus: 200
 }));
