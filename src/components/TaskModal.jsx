@@ -31,6 +31,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, initialData }) {
       setForm(defaultForm);
     }
     setError('');
+    
   }, [initialData, isOpen]);
 
   const handleChange = (e) => {
